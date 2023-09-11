@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEV Bot Control Panel</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        label {
+            font-weight: bold;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MEV Bot Control Panel</h1>
+        <div>
+            <label for="tradingPair">Trading Pair:</label>
+            <input type="text" id="tradingPair" value="BTC/USDT">
+        </div>
+        <div>
+            <label for="startButton"></label>
+            <button id="startButton" onclick="startBot()">Start Bot</button>
+        </div>
+        <div>
+            <label for="stopButton"></label>
+            <button id="stopButton" onclick="stopBot()">Stop Bot</button>
+        </div>
+    </div>
+
+    <script>
+        function startBot() {
+            // Retrieve user input
+            const tradingPair = document.getElementById("tradingPair").value;
+
+            // Prepare the data to send to the backend
+            const requestData = {
+                tradingPair
+            };
+
+            // Send a POST request to start the bot
+            fetch('http://localhost:5000/start-bot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                if (data.success) {
+                    console.log("Bot started successfully:", data.message);
+                } else {
+                    console.error("Failed to start the bot:", data.error);
+                }
+            })
+            .catch(error => {
+                console.error("An error occurred:", error);
+            });
+        }
+
+        function stopBot() {
+            // Send a POST request to stop the bot
+            fetch('http://localhost:5000/stop-bot', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                if (data.success) {
+                    console.log("Bot stopped successfully:", data.message);
+                } else {
+                    console.error("Failed to stop the bot:", data.error);
+                }
+            })
+            .catch(error => {
+                console.error("An error occurred:", error);
+            });
+        }
+    </script>
+</body>
+</html>
